@@ -1,4 +1,4 @@
-import { LEVELS, getLevel, objectivesComplete } from "./levels.ts";
+import { CAMPAIGN_VERSION, LEVELS, getLevel, objectivesComplete } from "./levels.ts";
 
 export const SIZE = 8;
 export const CELLS = SIZE * SIZE;
@@ -36,7 +36,8 @@ export interface Game {
 }
 
 export interface SavedGame {
-  format: 3;
+  format: 4;
+  campaign: number;
   level: number;
   completed: number;
   collected: number[];
@@ -345,13 +346,14 @@ export function activateSpecial(game: Game, index: number, random: Random = Math
 }
 
 export function snapshotGame(game: Game): SavedGame {
-  return { format: 3, level: game.level, completed: game.completed, collected: [...game.collected], board: [...game.board], specials: [...game.specials], score: game.score, moves: game.moves };
+  return { format: 4, campaign: CAMPAIGN_VERSION, level: game.level, completed: game.completed, collected: [...game.collected], board: [...game.board], specials: [...game.specials], score: game.score, moves: game.moves };
 }
 
 export function restoreGame(value: unknown): Game | null {
   if (!value || typeof value !== "object") return null;
   const saved = value as Partial<Omit<SavedGame, "format">> & { format?: unknown };
-  if (![1, 2, 3].includes(Number(saved.format)) || typeof saved.format !== "number" || !Array.isArray(saved.board) || saved.board.length !== CELLS) return null;
+  if (![1, 2, 3, 4].includes(Number(saved.format)) || typeof saved.format !== "number" || !Array.isArray(saved.board) || saved.board.length !== CELLS) return null;
+  if (saved.format === 4 && (!Number.isInteger(saved.campaign) || saved.campaign! < 1 || saved.campaign! > CAMPAIGN_VERSION)) return null;
   if (!saved.board.every((value) => Number.isInteger(value) && value >= 0 && value < COLORS)) return null;
   if (!Number.isSafeInteger(saved.score) || (saved.score ?? -1) < 0 || (saved.score ?? Infinity) > 10_000_000) return null;
   if (!Number.isSafeInteger(saved.moves) || (saved.moves ?? -1) < 0 || (saved.moves ?? Infinity) > 10_000_000) return null;
@@ -362,21 +364,24 @@ export function restoreGame(value: unknown): Game | null {
   if (findMatches(board).length) return null;
   // Score-only saves contain no color history: reuse their board/items for a fresh level 1.
   // The separate best-score key remains intact. Do not invent completed objectives.
-  const legacy = saved.format !== 3;
+  const legacy = saved.format === 1 || saved.format === 2;
+  const rebalanced = !legacy && (saved.format === 3 || saved.campaign !== CAMPAIGN_VERSION);
   const level = legacy ? 1 : saved.level!;
   const completed = legacy ? 0 : saved.completed!;
   if (!Number.isInteger(level) || level < 1 || level > LEVELS.length
     || !Number.isInteger(completed) || completed < 0 || completed > LEVELS.length || level > completed + 1) return null;
   if (!legacy && (!Array.isArray(saved.collected) || saved.collected.length !== COLORS
     || !saved.collected.every((count) => Number.isSafeInteger(count) && count >= 0 && count <= 100_000))) return null;
-  const collected = legacy ? Array<number>(COLORS).fill(0) : [...saved.collected!];
-  const moves = legacy ? 0 : saved.moves!;
+  // New objectives must not erase unlocks or turn a valid old session into an immediate loss.
+  // Keep the board/items, but restart this level's counters with the new move allowance.
+  const collected = legacy || rebalanced ? Array<number>(COLORS).fill(0) : [...saved.collected!];
+  const moves = legacy || rebalanced ? 0 : saved.moves!;
   if (moves > getLevel(level).moves) return null;
   const won = objectivesComplete(level, collected);
   const over = !won && moves >= getLevel(level).moves;
   if (won && completed < level) return null;
   if (!won && !over && !hasMoves(board, specials)) {
-    if (!legacy) return null;
+    if (!legacy && !rebalanced) return null;
     shuffleInPlace(board, specials, Math.random);
   }
   return {
@@ -385,7 +390,7 @@ export function restoreGame(value: unknown): Game | null {
     collected,
     board,
     specials,
-    score: legacy ? 0 : saved.score!,
+    score: legacy || rebalanced ? 0 : saved.score!,
     moves,
     combo: 0,
     won,

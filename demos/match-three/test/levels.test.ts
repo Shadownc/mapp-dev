@@ -152,6 +152,23 @@ describe("seven-level campaign", () => {
 });
 
 describe("campaign saves", () => {
+  test("rebalanced saves keep unlocks and items even when old moves exceed the new limit", () => {
+    const game = createGame(seeded(), 6, 5);
+    game.specials[12] = "column";
+    const saved = { ...snapshotGame(game), format: 3, moves: 28, score: 2500, collected: [23, 20, 0, 0, 0, 24] };
+    const restored = restoreGame(saved)!;
+    expect(restored.level).toBe(6);
+    expect(restored.completed).toBe(5);
+    expect(restored.board).toEqual(game.board);
+    expect(restored.specials[12]).toBe("column");
+    expect(restored.moves).toBe(0);
+    expect(restored.score).toBe(0);
+    expect(restored.collected).toEqual(Array(COLORS).fill(0));
+    expect(restored.over).toBe(false);
+    expect(restoreGame(snapshotGame(restored))).toEqual(restored);
+    expect(restoreGame({ ...saved, level: 7, completed: 7 })!.completed).toBe(7);
+    expect(restoreGame({ ...snapshotGame(game), campaign: 999 })).toBeNull();
+  });
   test("current level, unlocks, counters and items round-trip without shared arrays", () => {
     const game = plainGame(5, 5);
     game.specials[27] = "row";

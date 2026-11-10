@@ -16,6 +16,15 @@ button:disabled { cursor: not-allowed; opacity: .45; }
 .candy__header { display: grid; grid-template-columns: minmax(0, 1fr) 126px; align-items: end; gap: 16px; }
 .candy__eyebrow { margin: 0 0 4px; color: var(--accent); font-weight: 800; font-size: 10px; letter-spacing: .18em; }
 h1 { margin: 0; font-size: clamp(28px, 6vw, 42px); line-height: 1.05; letter-spacing: -.06em; }
+.candy__title-secret { padding: 0; min-height: 44px; border-radius: 4px; background: transparent; font: inherit; letter-spacing: inherit; text-align: left; touch-action: manipulation; }
+.candy__title-secret:disabled { opacity: 1; }
+.candy__title-secret:hover:not(:disabled) { background: transparent; }
+.candy__collection { margin: 0 0 14px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; font-size: 11px; }
+.candy__collection p { line-height: 1.6; margin: 6px 0; }
+.candy__collection p:empty { display: none; }
+.candy__collection summary { cursor: pointer; font-weight: 800; }
+.candy__collection details { margin-top: 8px; }
+.candy__level-hint { margin: 0 0 10px; color: var(--muted); font-size: 11px; line-height: 1.5; }
 .candy__header p:last-child { margin: 8px 0 0; color: var(--muted); font-size: 11px; }
 .candy__scores { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; text-align: right; }
 .candy__scores span { display: block; color: var(--muted); font-size: 10px; }
@@ -39,7 +48,7 @@ h1 { margin: 0; font-size: clamp(28px, 6vw, 42px); line-height: 1.05; letter-spa
 .candy__levels .is-current { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 18%, var(--secondary)); }
 .candy__levels .is-complete { color: #25765f; background: #dcf4e8; }
 .candy__level-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
-.candy__level-heading strong { font-size: 14px; white-space: nowrap; }
+.candy__level-heading strong { font-size: 14px; }
 .candy__level-heading > span { font-size: 10px; color: var(--muted); text-align: right; }
 .candy__targets { display: grid; grid-template-columns: repeat(auto-fit, minmax(112px, 1fr)); gap: 6px; margin-bottom: 12px; }
 .candy__target { display: flex; gap: 8px; align-items: center; border: 1px solid var(--line); background: color-mix(in srgb, var(--tile) 60%, var(--secondary)); padding: 8px 10px; border-radius: 12px; }
@@ -78,12 +87,27 @@ h1 { margin: 0; font-size: clamp(28px, 6vw, 42px); line-height: 1.05; letter-spa
 .candy__gem[data-special="column"]::after { content: "↕"; }
 .candy__tile:not([data-special="none"]) { background: #fff5d8; border-color: #f5b83d80; }
 .candy__tile[data-color="0"] { --candy: #f16f83; }.candy__tile[data-color="1"] { --candy: #f5b83d; }.candy__tile[data-color="2"] { --candy: #62c7a7; }.candy__tile[data-color="3"] { --candy: #65a8e8; }.candy__tile[data-color="4"] { --candy: #a878d1; }.candy__tile[data-color="5"] { --candy: #f18c48; }
+/* Keep all six color families and shapes recognizable in the secret soda palette. */
+:root[data-candy-theme="soda"] .candy__tile[data-color="0"], :root[data-candy-theme="soda"] .candy__target[data-color="0"] { --candy: #ed4671; }
+:root[data-candy-theme="soda"] .candy__tile[data-color="1"], :root[data-candy-theme="soda"] .candy__target[data-color="1"] { --candy: #e8bd24; }
+:root[data-candy-theme="soda"] .candy__tile[data-color="2"], :root[data-candy-theme="soda"] .candy__target[data-color="2"] { --candy: #2bbd8f; }
+:root[data-candy-theme="soda"] .candy__tile[data-color="3"], :root[data-candy-theme="soda"] .candy__target[data-color="3"] { --candy: #308ee8; }
+:root[data-candy-theme="soda"] .candy__tile[data-color="4"], :root[data-candy-theme="soda"] .candy__target[data-color="4"] { --candy: #a35ae0; }
+:root[data-candy-theme="soda"] .candy__tile[data-color="5"], :root[data-candy-theme="soda"] .candy__target[data-color="5"] { --candy: #f57c22; }
+:root[data-candy-theme="soda"] .candy__target .candy__target-icon { background: var(--candy); }
+:root[data-candy-theme="soda"] .candy__gem { background: linear-gradient(145deg, #ffffff80, transparent 45%), var(--candy); }
 .candy__tile.is-selected { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, var(--tile)); }
 .candy__tile.is-selected .candy__gem { animation: candy-wiggle .9s ease-in-out infinite; }
 .candy__board.is-busy .candy__tile { transition: none; }
-.candy__overlay { position: absolute; z-index: 3; inset: 0; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 9px; border-radius: 18px; padding: 24px; background: color-mix(in srgb, var(--secondary) 94%, transparent); text-align: center; animation: candy-reveal .25s ease-out; }
+.candy__overlay { position: absolute; z-index: 3; inset: 0; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 9px; border-radius: 18px; padding: 18px; overflow-y: auto; background: color-mix(in srgb, var(--secondary) 94%, transparent); text-align: center; animation: candy-reveal .25s ease-out; }
 .candy__overlay.is-win::before { content: "✦"; font-size: 56px; line-height: 1; color: #f5b83d; text-shadow: 0 4px 0 #f18c4840; animation: candy-win .65s cubic-bezier(.2,.8,.3,1.3); }
 .candy__overlay h2 { margin: 0; font-size: 28px; }.candy__overlay p { margin: 0 0 6px; color: var(--muted); font-size: 13px; }.candy__overlay button { min-width: 135px; }
+.candy__overlay:has(.candy__egg-finale:not([hidden])) { gap: 6px; justify-content: flex-start; }
+.candy__overlay:has(.candy__egg-finale:not([hidden]))::before { font-size: 28px; flex-shrink: 0; }
+.candy__overlay:has(.candy__egg-finale:not([hidden])) h2 { font-size: 23px; }
+.candy__overlay .candy__egg-last { font-weight: 800; color: var(--primary); animation: candy-reveal .35s ease-out; }
+.candy__egg-finale { width: 100%; border: 1px solid var(--line); border-radius: 10px; padding: 8px; background: color-mix(in srgb, #f5b83d 15%, var(--secondary)); }
+.candy__egg-finale strong { font-size: 13px; }.candy__egg-finale p { margin: 4px 0 0; font-size: 11px; line-height: 1.5; }
 .candy__effects { position: absolute; z-index: 4; inset: 0; overflow: hidden; border-radius: 18px; pointer-events: none; contain: strict; }
 .candy__spark, .candy__confetti { position: absolute; display: block; width: 7px; height: 7px; border-radius: 50%; }
 .candy__confetti { width: 8px; height: 13px; border-radius: 2px; }

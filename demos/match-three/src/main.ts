@@ -1,11 +1,12 @@
 import "./style.css";
 import { getSDK } from "@discourse-mini-app/sdk";
 import { CELLS, COLORS, SIZE, activateSpecial, areAdjacent, createGame, move, restoreGame, snapshotGame, startLevel } from "./engine.ts";
-import { LEVELS, getLevel, objectiveProgress } from "./levels.ts";
+import { CAMPAIGN_VERSION, LEVELS, getLevel, objectiveProgress } from "./levels.ts";
 import type { Specials } from "./engine.ts";
 import { createEffects } from "./effects.ts";
 import { createHost } from "./host.ts";
 import { createLeaderboard } from "./leaderboard.ts";
+import { createEasterEggs } from "./easter-eggs.ts";
 import { replayRun } from "./ranked.ts";
 import type { RankedSave } from "./ranked.ts";
 import appConfig from "../app.config.json";
@@ -18,7 +19,7 @@ type Elements = {
   continue: HTMLButtonElement; again: HTMLButtonElement; moves: HTMLElement;
   combo: HTMLElement; pause: HTMLButtonElement; reset: HTMLButtonElement; notice: HTMLElement;
   effects: HTMLElement; progress: HTMLElement; "target-label": HTMLElement;
-  levels: HTMLElement; "level-title": HTMLElement; targets: HTMLElement;
+  levels: HTMLElement; "level-title": HTMLElement; targets: HTMLElement; "level-hint": HTMLElement;
   "game-mode": HTMLElement;
 };
 const elements = new Map<keyof Elements, HTMLElement>();
@@ -70,6 +71,7 @@ const host = createHost(sdk, messages, {
   },
 });
 const t = host.t;
+const eggs = createEasterEggs(appConfig.easterEggs, t, (state) => { void host.save("match-three-eggs", { ...state }); });
 const gems: HTMLElement[] = [];
 const tiles = Array.from({ length: CELLS }, (_, index) => {
   const tile = document.createElement("button");
@@ -120,6 +122,7 @@ const leaderboard = appConfig.leaderboard.enabled ? createLeaderboard(sdk, t, {
   },
   start(run) {
     stopEffects();
+    eggs.leaveVictory();
     const replay = replayRun(run, []);
     replay.game.completed = Math.max(game.completed, replay.game.completed);
     game = replay.game;
@@ -150,6 +153,7 @@ function localize() {
   element("levels").setAttribute("aria-label", t("levelSelect"));
   element("targets").setAttribute("aria-label", t("collectionProgress"));
   effects.invalidateGeometry();
+  eggs.render();
   leaderboard?.render();
 }
 
@@ -162,7 +166,8 @@ function render() {
   const progress = objectiveProgress(game.level, collected);
   hidden(element("game-mode"), !appConfig.leaderboard.enabled);
   text(element("game-mode"), t(ranked ? "modeRanked" : rankedVerified ? "modeVerified" : "modePractice"));
-  text(element("level-title"), t("levelTitle", { level: level.id, total: LEVELS.length }));
+  text(element("level-title"), `${t("levelTitle", { level: level.id, total: LEVELS.length })} · ${t(`levelName${level.id}`)}`);
+  text(element("level-hint"), t(`levelHint${level.id}`));
   for (const [index, button] of levelButtons.entries()) {
     const id = index + 1;
     const locked = id > game.completed + 1;
@@ -228,6 +233,7 @@ function render() {
   classState(element("overlay"), "is-win", won && !paused);
   text(element("overlay-title"), t(paused ? "pausedTitle" : game.over ? "over" : finished ? "campaignWin" : "win", { level: game.level }));
   text(element("overlay-copy"), t(paused ? "pausedText" : game.over ? "overCopy" : finished ? "campaignWinCopy" : "winCopy", { level: game.level + 1 }));
+  eggs.victory(game, won && !paused);
   hidden(element("continue"), game.over && !paused);
   text(element("continue"), t(paused ? "resume" : finished ? "replayJourney" : "nextLevel"));
   text(element("pause"), t(paused ? "resume" : "pause"));
@@ -277,6 +283,7 @@ async function play(first: number, second?: number) {
   const collectedBefore = [...game.collected];
   const alreadyWon = game.won;
   const result = second === undefined ? activateSpecial(game, first, rankedRandom) : move(game, first, second, rankedRandom);
+  if (game.won && !alreadyWon) eggs.won(game.completed);
   if (result.changed && ranked) {
     ranked.actions.push(second === undefined ? [first] : [first, second]);
     if (game.won) pendingResult = { run: { ...ranked.run }, actions: ranked.actions.map((action) => [...action]) };
@@ -285,6 +292,8 @@ async function play(first: number, second?: number) {
     leaderboard?.notifyPending();
   }
   game.selected = -1;
+  // Save victories before playback: pausing or closing during the animation keeps rewards and progress together.
+  if (result.changed && (game.won || game.over)) persist();
   element("notice").textContent = "";
   element("combo").textContent = "";
   animating = true;
@@ -378,6 +387,7 @@ function changeLevel(level: number) {
   const next = startLevel(game, level);
   if (!next) return;
   stopEffects();
+  eggs.leaveVictory();
   ranked = null; rankedRandom = undefined; rankedVerified = false;
   game = next; paused = false;
   element("notice").textContent = "";
@@ -415,9 +425,11 @@ async function initialize() {
     } catch { pendingResult = null; }
     if (ranked && game.won && !pendingResult) pendingResult = { run: { ...ranked.run }, actions: ranked.actions.map((action) => [...action]) };
     paused = !game.over && !game.won;
-    const legacy = (previous as { format?: unknown }).format !== 3;
-    element("notice").textContent = t(legacy ? "legacyRestored" : "restored");
+    const format = (previous as { format?: unknown }).format;
+    const rebalanced = format === 3 || format === 4 && (previous as { campaign?: unknown }).campaign !== CAMPAIGN_VERSION;
+    element("notice").textContent = t(format === 1 || format === 2 ? "legacyRestored" : rebalanced ? "rebalancedRestored" : "restored");
   }
+  eggs.restore(await host.load("match-three-eggs"), game.completed);
   ready = true; render();
   leaderboard?.connect();
   leaderboard?.notifyPending();

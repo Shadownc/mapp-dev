@@ -1,5 +1,11 @@
 {
   "leaderboard": {
     "enabled": false
+  },
+  "easterEggs": {
+    "enabled": true,
+    "secretTheme": true,
+    "lastMove": true,
+    "campaignEnding": true
   }
 }

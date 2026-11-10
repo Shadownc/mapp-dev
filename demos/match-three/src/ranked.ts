@@ -2,7 +2,7 @@ import { activateSpecial, createGame, move } from "./engine.ts";
 import { getLevel } from "./levels.ts";
 
 // Increment this whenever the engine, level targets or scoring rules change.
-export const RULES_VERSION = "campaign-1";
+export const RULES_VERSION = "campaign-2";
 export type Action = [number] | [number, number];
 export interface RankedRun {
   id: string;

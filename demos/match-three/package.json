@@ -7,6 +7,7 @@
     "dev": "bun --bun vite",
     "build": "bun run typecheck && bun --bun vite build && bun run scripts/package.ts",
     "test": "bun test test",
+    "balance": "bun scripts/balance.ts",
     "typecheck": "tsc -p tsconfig.json",
     "build:debug": "MINI_APP_DEBUG=1 bun run build",
     "server": "bun run server/index.ts"

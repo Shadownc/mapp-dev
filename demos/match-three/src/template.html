@@ -3,7 +3,7 @@
   <header class="candy__header">
     <div>
       <p class="candy__eyebrow">MAPP ARCADE</p>
-      <h1 data-text="title"></h1>
+      <h1><button id="title-secret" type="button" class="candy__title-secret" data-text="title" disabled></button></h1>
       <p data-text="tagline"></p>
     </div>
     <div class="candy__scores">
@@ -15,6 +15,14 @@
     <div><strong id="player" data-text="playerLoading"></strong><span data-text="identity"></span></div>
     <button id="refresh" type="button" data-text="refresh"></button>
   </div>
+  <section class="candy__collection" id="egg-collection" hidden>
+    <p id="egg-message" role="status"></p>
+    <button id="egg-theme" type="button" hidden></button>
+    <details id="egg-ending" hidden>
+      <summary><span aria-hidden="true">✦</span> <span data-text="eggBadge"></span></summary>
+      <p data-text="eggEndingStory"></p>
+    </details>
+  </section>
   <details class="candy__leaderboard" id="leaderboard" hidden>
     <summary data-text="rankTitle"></summary>
     <p data-text="rankRules"></p>
@@ -35,6 +43,7 @@
   <p class="candy__game-mode" id="game-mode" hidden></p>
   <nav class="candy__levels" id="levels"></nav>
   <div class="candy__level-heading"><strong id="level-title"></strong><span data-text="levelInstruction"></span></div>
+  <p class="candy__level-hint" id="level-hint"></p>
   <div class="candy__targets" id="targets" role="group"></div>
   <div class="candy__status"><span id="moves"></span><span id="combo"></span></div>
   <div class="candy__goal"><div class="candy__progress" id="progress" role="progressbar" aria-valuemin="0" aria-valuemax="12" aria-valuenow="0"><span></span></div><span id="target-label"></span></div>
@@ -42,6 +51,8 @@
     <div class="candy__board" id="board" tabindex="0" role="grid"></div>
     <div class="candy__overlay" id="overlay" hidden>
       <h2 id="overlay-title"></h2><p id="overlay-copy"></p>
+      <p class="candy__egg-last" id="egg-last-move" data-text="eggLastMove" hidden></p>
+      <div class="candy__egg-finale" id="egg-finale" hidden><strong data-text="eggBadge"></strong><p data-text="eggFinale"></p></div>
       <button id="again" type="button" data-text="again"></button>
       <button id="continue" type="button" data-text="nextLevel"></button>
     </div>
