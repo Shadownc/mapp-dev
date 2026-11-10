@@ -1,0 +1,11 @@
+{
+  "format": 1,
+  "id": "01a1966a-f4a0-7b43-ad9c-c46b7f0e0281",
+  "name": "2048",
+  "version": "1.0.1",
+  "entry": "index.html",
+  "script": "app.js",
+  "style": "app.css",
+  "permissions": ["user.read", "theme.read", "storage.read", "storage.write"],
+  "media": {}
+}

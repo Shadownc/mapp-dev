@@ -1,0 +1,273 @@
+:root {
+  --primary: #23365b;
+  --secondary: #fff;
+  --muted: #62708a;
+  --border: #d7dfed;
+  --tertiary: #3c5edb;
+  --court: #23365b;
+  --court-ink: #fff;
+  --court-dot: #354a70;
+  --peach: #f5a789;
+  --sand: #efce7b;
+  --mint: #9bcbb8;
+  --lilac: #b7afe1;
+  --sky: #97bfdf;
+  --overlay: #23365be8;
+  font-family: "Avenir Next", "PingFang SC", "Microsoft YaHei", sans-serif;
+  color: var(--primary);
+  background: var(--secondary);
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+}
+button {
+  font: inherit;
+  cursor: pointer;
+}
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+:focus-visible {
+  outline: 3px solid var(--peach);
+  outline-offset: 3px;
+}
+[hidden] {
+  display: none !important;
+}
+.game {
+  padding: 22px 22px 12px;
+}
+.game__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.game__player {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.game__avatar {
+  width: 33px;
+  height: 33px;
+  display: grid;
+  place-items: center;
+  background: var(--sand);
+  border-radius: 11px;
+  font-weight: 700;
+}
+.game__player strong {
+  display: block;
+  font-size: 13px;
+}
+.game__player div > span {
+  display: block;
+  font-size: 10px;
+  color: var(--muted);
+  margin-block-start: 3px;
+}
+.game__refresh {
+  font-size: 11px;
+  color: var(--muted);
+  border: 0;
+  background: transparent;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  padding: 7px 0;
+}
+.game__stats {
+  display: grid;
+  grid-template-columns: 1.1fr 1.1fr 1fr 1fr;
+  gap: 12px;
+  margin-block: 25px 20px;
+}
+.game__stats > div > span {
+  display: block;
+  color: var(--muted);
+  font-size: 10px;
+  margin-block-end: 4px;
+}
+.game__stats strong {
+  font-size: 25px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.game__stats small {
+  font-size: 13px;
+  color: var(--muted);
+}
+.game__stats .game__lives {
+  font-size: 16px;
+  color: var(--tertiary);
+  line-height: 34px;
+  white-space: nowrap;
+}
+.game__court {
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--court);
+}
+.game__canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  touch-action: none;
+}
+.game__overlay {
+  position: absolute;
+  inset: 0;
+  background: var(--overlay);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 18px;
+  text-align: center;
+  color: var(--court-ink);
+}
+.game__emblem {
+  font-size: 44px;
+  line-height: 1;
+  color: var(--sand);
+  margin-block-end: 15px;
+}
+.game__overlay h1 {
+  font-size: clamp(18px, 3.5vw, 27px);
+  font-weight: 650;
+  margin: 0 0 10px;
+}
+.game__overlay p {
+  color: var(--sky);
+  font-size: 12px;
+  line-height: 1.7;
+  margin: 0 0 23px;
+}
+.game__start {
+  background: var(--peach);
+  color: var(--primary);
+  border: 0;
+  border-radius: 7px;
+  padding: 12px 28px;
+  font-size: 13px;
+  font-weight: 700;
+  box-shadow: 0 4px 0 #b66e53;
+}
+.game__start:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 #b66e53;
+}
+.game__controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-block-start: 16px;
+}
+.game__controls > div {
+  display: flex;
+  gap: 10px;
+}
+.game__controls button {
+  background: var(--secondary);
+  color: var(--primary);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 7px 12px;
+  font-size: 11px;
+}
+.game__controls > span {
+  font-size: 10px;
+  color: var(--muted);
+}
+.game__notice {
+  margin: 10px 0 0;
+  min-height: 17px;
+  color: var(--muted);
+  font-size: 10px;
+}
+@media (max-width: 500px) {
+  .game {
+    padding: 16px 12px 10px;
+  }
+  .game__stats {
+    margin-block: 20px 15px;
+  }
+  .game__stats strong {
+    font-size: 22px;
+  }
+  .game__stats .game__lives {
+    font-size: 12px;
+  }
+  .game__emblem {
+    font-size: 26px;
+    margin-block-end: 8px;
+  }
+  .game__overlay h1 {
+    font-size: 18px;
+    margin-block-end: 6px;
+  }
+  .game__overlay p {
+    font-size: 10px;
+    margin-block-end: 14px;
+  }
+  .game__start {
+    padding: 9px 20px;
+    font-size: 12px;
+  }
+  .game__controls > span {
+    display: none;
+  }
+}
+
+.game {
+  max-width: 1040px;
+  margin-inline: auto;
+}
+.game__connection {
+  margin: 0 0 16px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.game__player {
+  min-width: 0;
+}
+.game__player strong {
+  overflow-wrap: anywhere;
+}
+.game__avatar {
+  flex: 0 0 33px;
+  color: var(--court);
+}
+.game__controls button,
+.game__refresh,
+.game__start {
+  min-height: 44px;
+}
+.game__start {
+  color: var(--court);
+}
+@media (max-width: 420px) {
+  .game__court {
+    min-height: 230px;
+  }
+  .game__canvas {
+    min-height: 230px;
+  }
+  .game__stats {
+    gap: 8px;
+  }
+  .game__overlay {
+    padding: 12px;
+  }
+  .game__emblem {
+    display: none;
+  }
+}

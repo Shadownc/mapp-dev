@@ -1,0 +1,40 @@
+<main class="puzzle">
+  <p class="puzzle__connection" id="connection" role="status" data-text="playerLoading"></p>
+  <header class="puzzle__header">
+    <div>
+      <h1>2048<span aria-hidden="true">.</span></h1>
+      <p data-text="tagline"></p>
+    </div>
+    <div class="puzzle__scores">
+      <div><span data-text="score"></span><strong id="score">0</strong></div>
+      <div><span data-text="best"></span><strong id="best">0</strong></div>
+    </div>
+  </header>
+  <div class="puzzle__player">
+    <div>
+      <strong id="player" data-text="playerLoading"></strong><span data-text="identity"></span>
+    </div>
+    <button id="refresh" type="button" data-text="refresh"></button>
+  </div>
+  <div class="puzzle__play">
+    <div class="puzzle__board" id="board" tabindex="0" role="group"></div>
+    <div class="puzzle__overlay" id="overlay" hidden>
+      <h2 id="overlay-title"></h2>
+      <p id="overlay-copy"></p>
+      <button id="continue" type="button" data-text="continue"></button
+      ><button id="again" type="button" data-text="again"></button>
+    </div>
+  </div>
+  <div class="puzzle__controls">
+    <span id="moves"></span><button id="pause" type="button" data-text="pause"></button
+    ><button id="reset" type="button" data-text="reset"></button>
+  </div>
+  <div class="puzzle__directions" id="directions">
+    <button type="button" data-direction="left">←</button
+    ><button type="button" data-direction="up">↑</button
+    ><button type="button" data-direction="down">↓</button
+    ><button type="button" data-direction="right">→</button>
+  </div>
+  <p class="puzzle__help" data-text="help"></p>
+  <p class="puzzle__notice" id="notice" role="status" aria-live="polite"></p>
+</main>

@@ -1,0 +1,606 @@
+<main class="lab" id="lab">
+  <header class="lab__header">
+    <div>
+      <h1 data-text="title">能力测试台</h1>
+      <p class="lab__intro" data-text="intro"></p>
+    </div>
+    <label class="lab__locale"
+      ><span data-text="language"></span
+      ><select id="language">
+        <option value="zh_CN">简体中文</option>
+        <option value="zh_TW">繁體中文</option>
+        <option value="en">English</option>
+      </select></label
+    >
+  </header>
+  <section class="lab__session" aria-labelledby="session-title">
+    <h2 id="session-title" data-text="sessionTitle"></h2>
+    <strong id="connection" role="status"></strong>
+    <p id="connection-detail"></p>
+    <p class="lab__small" data-text="privacy"></p>
+  </section>
+  <nav class="lab__nav" aria-label="Sections" data-label="sections">
+    <a href="#layout" data-text="layoutTitle"></a>
+    <a href="#capabilities" data-text="capabilitiesTitle"></a>
+    <a href="#network" data-text="networkTitle"></a>
+    <a href="#results" data-text="resultsTitle"></a>
+  </nav>
+  <section class="lab__section" id="layout" aria-labelledby="layout-title">
+    <div class="lab__section-heading">
+      <h2 id="layout-title" data-text="layoutTitle"></h2>
+      <output id="dimensions"></output>
+    </div>
+    <p data-text="layoutHelp"></p>
+    <div class="lab__controls">
+      <label
+        ><span data-text="width"></span
+        ><select id="width">
+          <option value="auto" data-text="widthAuto"></option>
+          <option value="narrow" data-text="widthNarrow"></option>
+          <option value="tablet" data-text="widthTablet"></option></select
+      ></label>
+      <label
+        ><span data-text="appearance"></span
+        ><select id="appearance">
+          <option value="platform" data-text="platformTheme"></option>
+          <option value="light" data-text="light"></option>
+          <option value="dark" data-text="dark"></option></select
+      ></label>
+      <label
+        ><span data-text="direction"></span
+        ><select id="direction">
+          <option value="ltr">LTR</option>
+          <option value="rtl">RTL</option>
+        </select></label
+      >
+      <label class="lab__check"
+        ><input type="checkbox" id="large-type" /><span
+          data-text="largeType"
+        ></span
+      ></label>
+    </div>
+    <div class="lab__specimen" id="specimen">
+      <div
+        class="lab__swatches"
+        aria-label="Theme colors"
+        data-label="themeColors"
+      >
+        <span class="lab__swatch --background" data-text="background"></span
+        ><span class="lab__swatch --text" data-text="text"></span
+        ><span class="lab__swatch --accent" data-text="accent"></span>
+      </div>
+      <article class="lab__sample">
+        <h3 data-text="sampleTitle"></h3>
+        <p data-text="sampleText"></p>
+        <p class="lab__long-word" data-text="sampleLongWord"></p>
+        <div class="lab__sample-grid">
+          <div>
+            <strong data-text="sampleLeft"></strong>
+            <p data-text="sampleLeftText"></p>
+          </div>
+          <div>
+            <strong data-text="sampleRight"></strong>
+            <p data-text="sampleRightText"></p>
+          </div>
+        </div>
+        <form id="sample-form">
+          <label
+            ><span data-text="sampleName"></span
+            ><input
+              name="sample-name"
+              maxlength="80"
+              required
+              autocomplete="off"
+          /></label>
+          <label
+            ><span data-text="sampleOption"></span
+            ><select name="sample-option">
+              <option value="one" data-text="sampleOptionOne"></option>
+              <option value="two" data-text="sampleOptionTwo"></option></select
+          ></label>
+          <label class="lab__check"
+            ><input type="checkbox" name="sample-check" /><span
+              data-text="sampleCheck"
+            ></span
+          ></label>
+          <button type="submit" data-text="sampleSubmit"></button>
+          <output id="sample-result"></output>
+        </form>
+        <details>
+          <summary data-text="scrollTitle"></summary>
+          <div class="lab__scroll-sample" tabindex="0" data-label="scrollTitle">
+            <p data-text="scrollText"></p>
+            <p data-text="sampleText"></p>
+            <p data-text="scrollText"></p>
+            <p data-text="sampleText"></p>
+            <p data-text="scrollEnd"></p>
+          </div>
+        </details>
+      </article>
+    </div>
+  </section>
+  <section
+    class="lab__section"
+    id="capabilities"
+    aria-labelledby="capabilities-title"
+  >
+    <h2 id="capabilities-title" data-text="capabilitiesTitle"></h2>
+    <p data-text="capabilitiesHelp"></p>
+    <details open>
+      <summary data-text="permissionSummary"></summary>
+      <ul class="lab__permissions" id="permissions"></ul>
+    </details>
+    <div class="lab__capabilities">
+      <fieldset class="lab__group">
+        <legend data-text="identityTitle"></legend>
+        <p data-text="identityHelp"></p>
+        <div class="lab__actions">
+          <button
+            type="button"
+            data-action="permissions"
+            data-text="permissions"
+          ></button
+          ><button type="button" data-action="user" data-text="user"></button
+          ><button type="button" data-action="theme" data-text="theme"></button
+          ><button
+            type="button"
+            data-action="assets"
+            data-text="assets"
+          ></button>
+          <button
+            type="button"
+            data-action="launch"
+            data-text="launch"
+          ></button>
+        </div>
+        <label
+          ><span data-text="lookupUserId"></span
+          ><input
+            id="lookup-user-id"
+            type="number"
+            step="1"
+            autocomplete="off" /></label
+        ><button
+          type="button"
+          data-action="userLookup"
+          data-text="userLookup"
+        ></button>
+        <pre
+          class="lab__output"
+          id="identity-output"
+          data-text="notTested"
+        ></pre>
+      </fieldset>
+      <fieldset class="lab__group">
+        <legend data-text="storageTitle"></legend>
+        <p data-text="storageHelp"></p>
+        <label
+          ><span data-text="testKey"></span
+          ><input
+            id="storage-key"
+            value="sample"
+            maxlength="40"
+            autocomplete="off"
+        /></label>
+        <label
+          ><span data-text="jsonValue"></span
+          ><textarea id="storage-value" rows="3" maxlength="4096">
+{"layout":"grid","counter":1}</textarea
+          >
+        </label>
+        <div class="lab__actions">
+          <button
+            type="button"
+            data-action="storageWrite"
+            data-text="storageWrite"
+          ></button
+          ><button
+            type="button"
+            data-action="storageRead"
+            data-text="storageRead"
+          ></button
+          ><button
+            type="button"
+            data-action="storageRemove"
+            data-text="storageRemove"
+          ></button>
+        </div>
+
+        <label class="lab__check"
+          ><input id="allow-clear" type="checkbox" /><span
+            data-text="allowClear"
+          ></span></label
+        ><button
+          type="button"
+          data-action="storageClear"
+          data-text="storageClear"
+        ></button>
+        <output
+          class="lab__output"
+          id="storage-output"
+          data-text="notTested"
+        ></output>
+      </fieldset>
+      <fieldset class="lab__group">
+        <legend data-text="cookieTitle"></legend>
+        <p data-text="cookieHelp"></p>
+        <label
+          ><span data-text="cookieValue"></span
+          ><input
+            id="cookie-value"
+            value="layout-test"
+            maxlength="200"
+            autocomplete="off"
+        /></label>
+        <label
+          ><span data-text="cookieAge"></span
+          ><input
+            id="cookie-age"
+            type="number"
+            min="0"
+            max="2592000"
+            step="1"
+            value="60"
+        /></label>
+        <div class="lab__actions">
+          <button
+            type="button"
+            data-action="cookieWrite"
+            data-text="cookieWrite"
+          ></button
+          ><button
+            type="button"
+            data-action="cookieRead"
+            data-text="cookieRead"
+          ></button
+          ><button
+            type="button"
+            data-action="cookieRemove"
+            data-text="cookieRemove"
+          ></button>
+        </div>
+        <output
+          class="lab__output"
+          id="cookie-output"
+          data-text="notTested"
+        ></output>
+      </fieldset>
+      <fieldset class="lab__group">
+        <legend data-text="nativeTitle"></legend>
+        <p data-text="nativeHelp"></p>
+        <label
+          ><span data-text="clipboardValue"></span
+          ><input
+            id="clipboard-value"
+            value="Capability lab"
+            maxlength="200"
+            autocomplete="off"
+        /></label>
+        <div class="lab__actions">
+          <button
+            type="button"
+            data-action="clipboardWrite"
+            data-text="clipboardWrite"
+          ></button
+          ><button
+            type="button"
+            data-action="clipboardRead"
+            data-text="clipboardRead"
+          ></button
+          ><button
+            type="button"
+            data-action="fullscreenEnter"
+            data-text="fullscreenEnter"
+          ></button
+          ><button
+            type="button"
+            data-action="fullscreenExit"
+            data-text="fullscreenExit"
+          ></button>
+        </div>
+        <output
+          class="lab__output"
+          id="native-output"
+          data-text="notTested"
+        ></output>
+      </fieldset>
+      <fieldset class="lab__group">
+        <legend data-text="mediaTitle"></legend>
+        <p data-text="mediaHelp"></p>
+        <label class="lab__check"
+          ><input id="media-loop" type="checkbox" /><span
+            data-text="mediaLoop"
+          ></span
+        ></label>
+        <div class="lab__actions">
+          <button
+            type="button"
+            data-action="audioPlay"
+            data-text="audioPlay"
+          ></button
+          ><button
+            type="button"
+            data-action="audioStop"
+            data-text="audioStop"
+          ></button
+          ><button
+            type="button"
+            data-action="videoPlay"
+            data-text="videoPlay"
+          ></button
+          ><button
+            type="button"
+            data-action="videoStop"
+            data-text="videoStop"
+          ></button>
+        </div>
+        <output
+          class="lab__output"
+          id="media-output"
+          data-text="notTested"
+        ></output>
+      </fieldset>
+    </div>
+  </section>
+  <section class="lab__section" aria-labelledby="runtime-title">
+    <h2 id="runtime-title" data-text="runtimeTitle"></h2>
+    <p data-text="runtimeHelp"></p>
+    <div class="lab__capabilities">
+      <fieldset class="lab__group">
+        <legend>WebAssembly</legend>
+        <p data-text="wasmHelp"></p>
+        <button type="button" data-action="wasm" data-text="wasm"></button>
+        <pre
+          class="lab__output"
+          id="wasm-output"
+          data-text="wasmPreview"
+          role="status"
+        ></pre>
+        <p class="lab__small" data-text="wasmFailureHelp"></p>
+        <p class="lab__notice" data-text="runtimePolicy"></p>
+      </fieldset>
+      <fieldset class="lab__group">
+        <legend>Web Audio</legend>
+        <p data-text="webAudioHelp"></p>
+        <div class="lab__actions">
+          <button
+            id="web-audio-play"
+            type="button"
+            data-text="webAudioPlay"
+            disabled
+          ></button>
+          <button
+            id="web-audio-stop"
+            type="button"
+            data-text="webAudioStop"
+            disabled
+          ></button>
+        </div>
+        <output
+          class="lab__output"
+          id="web-audio-output"
+          data-text="webAudioPreview"
+          role="status"
+        ></output>
+      </fieldset>
+      <fieldset class="lab__group">
+        <legend data-text="pointerLock"></legend>
+        <p data-text="pointerLockHelp"></p>
+        <div class="lab__actions">
+          <button
+            id="pointer-lock-request"
+            type="button"
+            data-text="pointerLockRequest"
+            disabled
+          ></button>
+          <button
+            id="pointer-lock-exit"
+            type="button"
+            data-text="pointerLockExit"
+            disabled
+          ></button>
+        </div>
+        <canvas
+          class="lab__pointer-lock-canvas"
+          id="pointer-lock-canvas"
+          width="320"
+          height="160"
+          role="img"
+          data-label="pointerLockCanvas"
+        ></canvas>
+        <output
+          class="lab__output"
+          id="pointer-lock-output"
+          data-text="pointerLockPreview"
+          role="status"
+        ></output>
+      </fieldset>
+      <fieldset class="lab__group">
+        <legend data-text="pointerCapture"></legend>
+        <p data-text="pointerHelp"></p>
+        <label class="lab__check"
+          ><input id="pointer-sound" type="checkbox" /><span
+            data-text="pointerSound"
+          ></span
+        ></label>
+        <button
+          class="lab__pointer-pad"
+          id="pointer-pad"
+          type="button"
+          aria-pressed="false"
+          data-text="pointerPad"
+        ></button>
+        <output
+          class="lab__output"
+          id="pointer-output"
+          data-text="pointerIdle"
+          role="status"
+        ></output>
+        <output
+          class="lab__output"
+          id="pointer-audio-output"
+          data-text="notTested"
+        ></output>
+      </fieldset>
+    </div>
+  </section>
+  <section class="lab__section" id="network" aria-labelledby="network-title">
+    <h2 id="network-title" data-text="networkTitle"></h2>
+    <p data-text="networkHelp"></p>
+    <p
+      class="lab__notice"
+      id="network-config"
+      data-text="networkNotConfigured"
+    ></p>
+    <div class="lab__capabilities">
+      <fieldset class="lab__group">
+        <legend>HTTP</legend>
+        <label
+          ><span data-text="endpointName"></span
+          ><input
+            id="http-endpoint"
+            value="status"
+            maxlength="64"
+            autocomplete="off"
+        /></label>
+        <label
+          ><span data-text="httpMethod"></span
+          ><select id="http-method">
+            <option>GET</option>
+            <option>POST</option>
+            <option>PUT</option>
+            <option>PATCH</option>
+            <option>DELETE</option>
+          </select></label
+        >
+        <label
+          ><span data-text="queryJson"></span
+          ><textarea id="http-query" rows="2" maxlength="2048">{}</textarea>
+        </label>
+        <label
+          ><span data-text="bodyJson"></span
+          ><textarea id="http-body" rows="2" maxlength="4096">
+{"test":"capability-lab"}</textarea
+          >
+        </label>
+        <div class="lab__actions">
+          <button type="button" data-action="http" data-text="http"></button>
+        </div>
+        <output
+          class="lab__output"
+          id="http-output"
+          data-text="notTested"
+        ></output>
+      </fieldset>
+      <fieldset class="lab__group">
+        <legend>WebSocket</legend>
+        <label
+          ><span data-text="endpointName"></span
+          ><input
+            id="socket-endpoint"
+            value="events"
+            maxlength="64"
+            autocomplete="off"
+        /></label>
+        <label
+          ><span data-text="queryJson"></span
+          ><textarea id="socket-query" rows="2" maxlength="2048">{}</textarea>
+        </label>
+        <label
+          ><span data-text="socketData"></span
+          ><textarea id="socket-data" rows="2" maxlength="4096">
+{"type":"echo","value":"hello"}</textarea
+          >
+        </label>
+        <div class="lab__actions">
+          <button
+            type="button"
+            data-action="socketConnect"
+            data-text="socketConnect"
+          ></button
+          ><button
+            type="button"
+            data-action="socketSend"
+            data-text="socketSend"
+          ></button
+          ><button
+            type="button"
+            data-action="socketClose"
+            data-text="socketClose"
+          ></button>
+        </div>
+        <output
+          class="lab__output"
+          id="socket-output"
+          data-text="socketIdle"
+        ></output>
+      </fieldset>
+    </div>
+    <fieldset class="lab__group">
+      <legend data-text="validationTitle"></legend>
+      <p data-text="validationHelp"></p>
+      <div class="lab__actions">
+        <button
+          type="button"
+          data-action="rejectHeader"
+          data-text="rejectHeader"
+        ></button
+        ><button
+          type="button"
+          data-action="rejectBody"
+          data-text="rejectBody"
+        ></button>
+      </div>
+    </fieldset>
+  </section>
+  <section class="lab__section" id="results" aria-labelledby="results-title">
+    <div class="lab__section-heading">
+      <h2 id="results-title" data-text="resultsTitle"></h2>
+      <output id="pending" role="status"></output>
+    </div>
+    <p data-text="resultsHelp"></p>
+    <div class="lab__actions">
+      <button type="button" id="stop-waiting" data-text="stopWaiting"></button
+      ><button
+        type="button"
+        id="clear-results"
+        data-text="clearResults"
+      ></button
+      ><button
+        type="button"
+        id="clear-private"
+        data-text="clearPrivate"
+      ></button>
+    </div>
+    <p class="lab__small" data-text="stopWaitingHelp"></p>
+    <ol class="lab__results" id="result-list"></ol>
+    <p id="empty-results" data-text="emptyResults"></p>
+    <details>
+      <summary data-text="manualTitle"></summary>
+      <p data-text="manualHelp"></p>
+      <ul class="lab__manual">
+        <li>
+          <label class="lab__check"
+            ><input type="checkbox" /><span data-text="manualPermission"></span
+          ></label>
+        </li>
+        <li>
+          <label class="lab__check"
+            ><input type="checkbox" /><span data-text="manualExit"></span
+          ></label>
+        </li>
+        <li>
+          <label class="lab__check"
+            ><input type="checkbox" /><span data-text="manualRevoke"></span
+          ></label>
+        </li>
+        <li>
+          <label class="lab__check"
+            ><input type="checkbox" /><span data-text="manualCookie"></span
+          ></label>
+        </li>
+      </ul>
+    </details>
+  </section>
+  <footer class="lab__footer" data-text="footer"></footer>
+</main>

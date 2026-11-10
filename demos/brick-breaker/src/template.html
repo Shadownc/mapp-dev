@@ -1,0 +1,37 @@
+<main class="game">
+  <p class="game__connection" id="connection" role="status" data-text="loading"></p>
+  <header class="game__header">
+    <div class="game__player">
+      <span class="game__avatar" id="player-avatar">?</span>
+      <div>
+        <strong id="player-name" data-text="player"></strong><span data-text="identityHint"></span>
+      </div>
+    </div>
+    <button class="game__refresh" id="refresh-user" type="button" data-text="refresh"></button>
+  </header>
+  <div class="game__stats">
+    <div><span data-text="score"></span><strong id="score">0</strong></div>
+    <div><span data-text="best"></span><strong id="best">0</strong></div>
+    <div>
+      <span data-text="level"></span><strong><span id="level">1</span><small> / 3</small></strong>
+    </div>
+    <div><span data-text="lives"></span><strong class="game__lives" id="lives">● ● ●</strong></div>
+  </div>
+  <div class="game__court">
+    <canvas class="game__canvas" id="court" width="960" height="560" tabindex="0"></canvas>
+    <div class="game__overlay" id="overlay">
+      <span class="game__emblem" aria-hidden="true">✳</span>
+      <h1 id="overlay-title" data-text="readyTitle"></h1>
+      <p id="overlay-copy" data-text="readyText"></p>
+      <button class="game__start" id="start" type="button" disabled data-text="loading"></button>
+    </div>
+  </div>
+  <footer class="game__controls">
+    <div>
+      <button id="pause" type="button" disabled data-text="pause"></button
+      ><button id="restart" type="button" disabled data-text="restart"></button>
+    </div>
+    <span data-text="tip"></span>
+  </footer>
+  <p class="game__notice" id="notice" role="status" aria-live="polite" data-text="touchTip"></p>
+</main>

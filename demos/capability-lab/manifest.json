@@ -1,0 +1,43 @@
+{
+  "format": 1,
+  "id": "01a19674-905b-7246-99ff-2f5e270a3f8f",
+  "name": "能力测试台",
+  "version": "1.0.1",
+  "entry": "index.html",
+  "script": "app.js",
+  "style": "app.css",
+  "permissions": [
+    "user.read",
+    "user.lookup",
+    "launch.read",
+    "theme.read",
+    "storage.read",
+    "storage.write",
+    "cookies.read",
+    "cookies.write",
+    "clipboard.read",
+    "clipboard.write",
+    "fullscreen",
+    "audio.play",
+    "audio.webAudio",
+    "pointer.lock",
+    "video.play",
+    "network.request",
+    "network.websocket"
+  ],
+  "assets": ["wasm/answer.wasm"],
+  "media": {
+    "chime": {
+      "path": "media/chime.wav",
+      "kind": "audio",
+      "mime": "audio/wav"
+    },
+    "pattern": {
+      "path": "media/pattern.mp4",
+      "kind": "video",
+      "mime": "video/mp4"
+    }
+  },
+  "endpoints": {},
+  "websockets": {}
+}

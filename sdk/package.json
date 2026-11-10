@@ -1,0 +1,30 @@
+{
+  "name": "@discourse-mini-app/sdk",
+  "version": "0.2.0",
+  "type": "module",
+  "types": "./index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "import": "./index.mjs"
+    },
+    "./pack": {
+      "types": "./pack.d.ts",
+      "import": "./pack.mjs"
+    },
+    "./server": {
+      "types": "./server.d.ts",
+      "import": "./server.mjs"
+    }
+  },
+  "files": [
+    "index.mjs",
+    "index.d.ts",
+    "types.d.ts",
+    "pack.mjs",
+    "pack.d.ts",
+    "server.mjs",
+    "server.d.ts",
+    "README.md"
+  ]
+}
