@@ -3,7 +3,15 @@ import { pack } from "@discourse-mini-app/sdk/pack";
 import { copyFile, readFile } from "node:fs/promises";
 import appConfig from "../app.config.json";
 
-const manifest = JSON.parse(await readFile("manifest.json", "utf8")) as MiniAppManifest;
+async function readJsonFile(path: string) {
+  const bytes = await readFile(path);
+  if (bytes[0] === 0xef && bytes[1] === 0xbb && bytes[2] === 0xbf) {
+    throw new Error(`${path} must be UTF-8 without a BOM`);
+  }
+  return JSON.parse(bytes.toString("utf8"));
+}
+
+const manifest = await readJsonFile("manifest.json") as MiniAppManifest;
 manifest.id = process.env.MINI_APP_ID || manifest.id;
 manifest.version = process.env.MINI_APP_VERSION || manifest.version;
 // Frontend and packaging share the same switch. An old API environment variable cannot enable ranking.
@@ -24,6 +32,7 @@ if (appConfig.leaderboard.enabled) {
 }
 await copyFile("src/template.html", "dist/web/index.html");
 await copyFile("src/strings.json", "dist/web/strings.json");
+await readJsonFile("dist/web/strings.json");
 const files: Record<string, Buffer> = {};
 for (const name of ["index.html", "app.js", "app.css", "strings.json"]) files[name] = await readFile(`dist/web/${name}`);
 const result = await pack({ manifest, files, outputDirectory: "dist/package" });

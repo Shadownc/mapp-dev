@@ -1,5 +1,7 @@
 {
   "zh_CN": {
+    "toolsTitle": "工具与道具", "toolHint": "提示可行交换", "toolShuffle": "重新洗牌", "toolMallet": "敲除糖果", "hintFound": "试试第 {first} 格与第 {second} 格交换。", "hintNone": "暂时没有可行交换。", "shuffleDone": "棋盘已重新洗牌。", "shuffleSuggested": "棋盘没有可行交换，可以打开工具菜单洗牌。", "malletChoose": "选择一颗糖果敲除（消耗 1 个敲糖锤）。", "malletUsed": "敲除完成，已正常结算。",
+    "eggCombo": "单步触发四轮连消！糖果工坊为你喝彩。", "eggChain": "道具连锁爆发！特殊糖果最喜欢热闹。", "eggStreak": "已经完成十二次操作，糖果工坊记得你的坚持。",
     "title": "糖果连线",
     "levelName1": "初尝甜头", "levelName2": "双色搭配", "levelName3": "道具工坊", "levelName4": "红糖专场", "levelName5": "三色配方", "levelName6": "连锁派对", "levelName7": "七色终章",
     "levelHint1": "先找红色三连，步数充足，慢慢熟悉棋盘。",
@@ -58,6 +60,8 @@
     "color0": "红色糖果", "color1": "黄色糖果", "color2": "绿色糖果", "color3": "蓝色糖果", "color4": "紫色糖果", "color5": "橙色糖果"
   },
   "en": {
+    "toolsTitle": "Tools", "toolHint": "Show a valid swap", "toolShuffle": "Shuffle board", "toolMallet": "Candy mallet", "hintFound": "Try swapping cells {first} and {second}.", "hintNone": "No valid swap is available.", "shuffleDone": "The board has been shuffled.", "shuffleSuggested": "No valid swaps. Open Tools to shuffle the board.", "malletChoose": "Choose a candy to remove (uses 1 mallet).", "malletUsed": "Candy removed and scored.",
+    "eggCombo": "Four cascades in one move! The candy workshop applauds.", "eggChain": "A chain reaction! Special candies love a crowd.", "eggStreak": "A dozen moves played. The candy workshop remembers your dedication.",
     "levelName1": "First taste", "levelName2": "Sweet pair", "levelName3": "Candy workshop", "levelName4": "Red delight", "levelName5": "Three-color recipe", "levelName6": "Chain party", "levelName7": "The final recipe",
     "levelHint1": "Look for red matches. There is plenty of time to learn the board.",
     "levelHint2": "Collect yellow and green. Focus on the target that still needs help.",

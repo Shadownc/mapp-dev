@@ -22,7 +22,7 @@ bun run dev
 MINI_APP_ID=应用ID MINI_APP_VERSION=1.0.0 bun run build
 ```
 
-Vite 输出单个 IIFE `app.js` 和 `app.css`，用 SDK `pack` 生成 ZIP。只上传运行 ZIP，不上传开发项目目录或旁边的 `package.json`。五个基础文件在根目录；其他文件必须在 manifest 的 `assets` 或 `media` 中声明：
+Vite 输出单个 IIFE `app.js` 和 `app.css`，用 SDK `pack` 生成 ZIP。只上传运行 ZIP，不上传开发项目目录或旁边的 `package.json`。`manifest.json` 和 `strings.json` 必须是 UTF-8 无 BOM 的合法 JSON。五个基础文件在根目录；其他文件必须在 manifest 的 `assets` 或 `media` 中声明：
 
 ```text
 manifest.json

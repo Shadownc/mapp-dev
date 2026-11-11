@@ -15,6 +15,15 @@
     <div><strong id="player" data-text="playerLoading"></strong><span data-text="identity"></span></div>
     <button id="refresh" type="button" data-text="refresh"></button>
   </div>
+  <details class="candy__tools" id="tools">
+    <summary data-text="toolsTitle"></summary>
+    <div class="candy__tools-menu">
+      <button id="hint" type="button" data-text="toolHint"></button>
+      <button id="shuffle" type="button" data-text="toolShuffle"></button>
+      <button id="mallet" type="button" data-text="toolMallet"></button>
+    </div>
+    <p id="tool-status" role="status" aria-live="polite"></p>
+  </details>
   <section class="candy__collection" id="egg-collection" hidden>
     <p id="egg-message" role="status"></p>
     <button id="egg-theme" type="button" hidden></button>

@@ -1,6 +1,6 @@
 import "./style.css";
 import { getSDK } from "@discourse-mini-app/sdk";
-import { CELLS, COLORS, SIZE, activateSpecial, areAdjacent, createGame, move, restoreGame, snapshotGame, startLevel } from "./engine.ts";
+import { CELLS, COLORS, SIZE, activateSpecial, areAdjacent, createBoard, createGame, findMatches, hasMoves, knockOut, move, restoreGame, snapshotGame, startLevel } from "./engine.ts";
 import { CAMPAIGN_VERSION, LEVELS, getLevel, objectiveProgress } from "./levels.ts";
 import type { Specials } from "./engine.ts";
 import { createEffects } from "./effects.ts";
@@ -52,6 +52,8 @@ let pendingResult: RankedSave | null = null;
 let rankedRandom: (() => number) | undefined;
 let rankingBusy = false;
 let rankedVerified = false;
+let mallets = 2;
+let malletArmed = false;
 const sdk = import.meta.env.DEV ? null : getSDK();
 
 const host = createHost(sdk, messages, {
@@ -226,6 +228,15 @@ function render() {
   text(element("target-label"), t("collected", progress));
   text(element("best"), String(best));
   text(element("moves"), t("moves", { moves: Math.max(0, level.moves - game.moves) }));
+  const hint = document.getElementById("hint") as HTMLButtonElement;
+  const shuffle = document.getElementById("shuffle") as HTMLButtonElement;
+  const mallet = document.getElementById("mallet") as HTMLButtonElement;
+  const toolDisabled = !ready || animating || paused || game.over || game.won || rankingBusy;
+  disabled(hint, toolDisabled);
+  disabled(shuffle, toolDisabled || hasMoves(game.board, game.specials));
+  disabled(mallet, toolDisabled || mallets <= 0);
+  text(mallet, `${t("toolMallet")} (${mallets})`);
+  classState(mallet, "is-armed", malletArmed);
   if (!animating) text(element("combo"), game.combo > 1 ? t("combo", game) : "");
   const won = game.won && !animating;
   const finished = won && game.level === LEVELS.length;
@@ -269,6 +280,7 @@ function persist() {
   saveTimer = undefined;
   if (!ready) return;
   const save = { ...snapshotGame(game), ranked, pendingResult, rankedVerified };
+  (save as typeof save & { mallets: number }).mallets = mallets;
   void host.save("match-three-state", JSON.parse(JSON.stringify(save)));
   void host.saveScore(game.score);
 }
@@ -283,6 +295,8 @@ async function play(first: number, second?: number) {
   const collectedBefore = [...game.collected];
   const alreadyWon = game.won;
   const result = second === undefined ? activateSpecial(game, first, rankedRandom) : move(game, first, second, rankedRandom);
+  if (result.changed) eggs.move(result.combo, result.cascades.reduce((count, step) => count + step.activated.length, 0));
+  if (second === undefined && malletArmed && result.changed) { mallets--; malletArmed = false; }
   if (game.won && !alreadyWon) eggs.won(game.completed);
   if (result.changed && ranked) {
     ranked.actions.push(second === undefined ? [first] : [first, second]);
@@ -369,13 +383,52 @@ async function play(first: number, second?: number) {
     if (!saveTimer) saveTimer = setTimeout(persist, 3000);
     if (game.won || game.over) persist();
     if (game.won && !alreadyWon) effects.celebrate();
+    if (result.reshuffled) document.getElementById("tool-status")!.textContent = t("shuffleSuggested");
   } else {
     element("notice").textContent = t("invalidMove");
   }
   render();
 }
+async function useMallet(index: number) {
+  if (!ready || !malletArmed || mallets <= 0 || animating || paused || game.over || game.won || rankingBusy) return;
+  stopEffects();
+  const before = [...game.board], specialsBefore = [...game.specials], scoreBefore = game.score, collectedBefore = [...game.collected];
+  const alreadyWon = game.won;
+  const result = knockOut(game, index, rankedRandom);
+  if (!result.changed) return;
+  mallets--; malletArmed = false; game.selected = -1;
+  if (ranked) { ranked.actions.push([-1, index]); if (game.won) pendingResult = { run: { ...ranked.run }, actions: ranked.actions.map((action) => [...action]) }; persist(); leaderboard?.notifyPending(); }
+  displayBoard = before; displaySpecials = specialsBefore; displayScore = scoreBefore; displayCollected = collectedBefore;
+  animating = true; render();
+  const run = animationRun;
+  try {
+    for (const step of result.cascades.slice(0, 10)) {
+      if (effects.reduced()) break;
+      displayBoard = step.before; displaySpecials = step.specialsBefore; render();
+      if (step.activated.length) { await effects.activate(step.activated); if (run !== animationRun) return; }
+      await effects.clear(step, t("toolMallet"));
+      if (run !== animationRun) return;
+      displayBoard = step.after; displaySpecials = step.specialsAfter; displayScore = (displayScore ?? scoreBefore) + step.points;
+      displayCollected = (displayCollected ?? collectedBefore).map((count, color) => count + step.collected[color]);
+      render(); effects.pulse(element("score"));
+      for (let color = 0; color < COLORS; color++) if (step.collected[color]) effects.pulse(targetCards[color].count);
+      await effects.fall(step.falls);
+      if (run !== animationRun) return;
+      if (step.created.length) { element("notice").textContent = t("specialEarned", { types: [...new Set(step.created.map(({ type }) => t(`special_${type}`)))].join(" / ") }); await effects.reward(step.created); if (run !== animationRun) return; }
+    }
+  } finally {
+    if (run === animationRun) { animating = false; displayBoard = null; displaySpecials = null; displayScore = null; displayCollected = null; render(); }
+  }
+  if (game.won && !alreadyWon) eggs.won(game.completed);
+  if (ranked && game.won) { pendingResult = { run: { ...ranked.run }, actions: ranked.actions.map((action) => [...action]) }; leaderboard?.notifyPending(); }
+  if (game.won) effects.celebrate();
+  document.getElementById("tool-status")!.textContent = t("malletUsed");
+  if (game.won || game.over) persist(); else if (!saveTimer) saveTimer = setTimeout(persist, 3000);
+  render();
+}
 function select(index: number) {
   if (!ready || animating || paused || game.over || game.won || rankingBusy) return;
+  if (malletArmed) { void useMallet(index); return; }
   if (game.specials[index]) { void play(index); return; }
   if (game.selected === index) game.selected = -1;
   else if (areAdjacent(game.selected, index)) { play(game.selected, index); return; }
@@ -390,6 +443,7 @@ function changeLevel(level: number) {
   eggs.leaveVictory();
   ranked = null; rankedRandom = undefined; rankedVerified = false;
   game = next; paused = false;
+  mallets = 2; malletArmed = false;
   element("notice").textContent = "";
   persist(); render(); element("board").focus({ preventScroll: true });
   void enterBoard();
@@ -409,6 +463,7 @@ async function initialize() {
   const restored = restoreGame(previous);
   if (restored) {
     game = restored;
+    mallets = Math.max(0, Math.min(5, Number((previous as { mallets?: unknown }).mallets) || 2));
     // With ranking disabled, an old ranked board continues as an ordinary local game.
     const saved = (appConfig.leaderboard.enabled ? previous : {}) as unknown as { ranked?: RankedSave; pendingResult?: RankedSave; rankedVerified?: boolean };
     rankedVerified = saved.rankedVerified === true;
@@ -443,6 +498,26 @@ element("refresh").addEventListener("click", async () => {
   try { await host.connect(); } finally { element("refresh").disabled = false; }
 });
 element("reset").addEventListener("click", reset);
+document.getElementById("hint")!.addEventListener("click", () => {
+  const status = document.getElementById("tool-status")!;
+  let pair: [number, number] | null = null;
+  for (let index = 0; index < CELLS && !pair; index++) for (const other of [index + 1, index + SIZE]) {
+    if (!areAdjacent(index, other)) continue;
+    const board = [...game.board]; [board[index], board[other]] = [board[other], board[index]];
+    if (findMatches(board).length) { pair = [index, other]; break; }
+  }
+  status.textContent = pair ? t("hintFound", { first: pair[0] + 1, second: pair[1] + 1 }) : t("hintNone");
+  if (pair) { classState(tiles[pair[0]], "is-selected", true); classState(tiles[pair[1]], "is-selected", true); setTimeout(() => { classState(tiles[pair[0]], "is-selected", game.selected === pair![0]); classState(tiles[pair[1]], "is-selected", game.selected === pair![1]); }, 900); }
+});
+document.getElementById("shuffle")!.addEventListener("click", () => {
+  if (hasMoves(game.board, game.specials)) return;
+  stopEffects(); game.board = createBoard(); game.specials.fill(null); game.selected = -1;
+  document.getElementById("tool-status")!.textContent = t("shuffleDone"); persist(); render(); void enterBoard();
+});
+document.getElementById("mallet")!.addEventListener("click", () => {
+  if (!ready || mallets <= 0 || game.over || game.won) return;
+  malletArmed = true; document.getElementById("tool-status")!.textContent = t("malletChoose"); render();
+});
 element("again").addEventListener("click", reset);
 element("pause").addEventListener("click", togglePause);
 element("continue").addEventListener("click", () => {

@@ -345,6 +345,12 @@ export function activateSpecial(game: Game, index: number, random: Random = Math
   return resolveMove(game, [index], [], random);
 }
 
+/** Remove one selected candy as a utility action, triggering any special it contains. */
+export function knockOut(game: Game, index: number, random: Random = Math.random): MoveResult {
+  if (game.over || game.won || !Number.isInteger(index) || index < 0 || index >= CELLS) return unchanged();
+  return resolveMove(game, [index], [], random);
+}
+
 export function snapshotGame(game: Game): SavedGame {
   return { format: 4, campaign: CAMPAIGN_VERSION, level: game.level, completed: game.completed, collected: [...game.collected], board: [...game.board], specials: [...game.specials], score: game.score, moves: game.moves };
 }

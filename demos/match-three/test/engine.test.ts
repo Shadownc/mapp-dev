@@ -1,7 +1,18 @@
 import { describe, expect, test } from "bun:test";
-import { CELLS, SIZE, areAdjacent, createBoard, createGame, findMatches, hasMoves, move, restoreGame, snapshotGame } from "../src/engine.ts";
+import { CELLS, SIZE, areAdjacent, createBoard, createGame, findMatches, hasMoves, knockOut, move, restoreGame, snapshotGame } from "../src/engine.ts";
 
 describe("match-three rules", () => {
+  test("mallet removes a selected candy, triggers specials, and spends exactly one move", () => {
+    const game = createGame(() => 0.2);
+    const index = 27;
+    const before = game.score;
+    const result = knockOut(game, index, () => 0.6);
+    expect(result.changed).toBe(true);
+    expect(game.moves).toBe(1);
+    expect(game.score).toBeGreaterThan(before);
+    expect(game.board[index]).toBeGreaterThanOrEqual(0);
+    expect(knockOut(game, -1).changed).toBe(false);
+  });
   test("creates a full board without an initial match and with a possible move", () => {
     const board = createBoard(() => 0.17);
     expect(board).toHaveLength(CELLS);

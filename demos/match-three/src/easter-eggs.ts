@@ -46,18 +46,20 @@ export function createEasterEggs(config: EggConfig, t: (key: string) => string, 
   const ending = node<HTMLDetailsElement>("egg-ending");
   const lastMove = node("egg-last-move"), finale = node("egg-finale");
   const tap = createSecretTap();
+  let discoveredMoves = 0;
   const commit = () => save({ ...state });
   function render() {
     const palette = config.enabled && config.secretTheme && state.themeUnlocked;
     const badge = config.enabled && config.campaignEnding && state.campaignUnlocked;
     title.disabled = !ready || !config.enabled || !config.secretTheme;
-    node("egg-collection").hidden = !palette && !badge;
+    node("egg-collection").hidden = !palette && !badge && !messageKey;
     node("egg-message").textContent = messageKey ? t(messageKey) : "";
     theme.hidden = !palette;
     theme.textContent = t(state.themeActive ? "eggThemeClassic" : "eggThemeSecret");
     theme.setAttribute("aria-pressed", String(palette && state.themeActive));
     document.documentElement.dataset.candyTheme = palette && state.themeActive ? "soda" : "classic";
     ending.hidden = !badge;
+    if (palette || badge) node("egg-collection").setAttribute("data-discovered", String(discoveredMoves));
   }
   title.addEventListener("click", () => {
     if (!ready || !config.enabled || !config.secretTheme || !tap(performance.now())) return;
@@ -85,6 +87,15 @@ export function createEasterEggs(config: EggConfig, t: (key: string) => string, 
       // This runs on each animation frame render; unchanged attributes must not invalidate styles.
       if (lastMove.hidden !== hideLast) lastMove.hidden = hideLast;
       if (finale.hidden !== hideFinale) finale.hidden = hideFinale;
+    },
+    move(combo: number, specialCount: number) {
+      if (!config.enabled) return;
+      discoveredMoves++;
+      if (combo >= 4) messageKey = "eggCombo";
+      else if (specialCount >= 2) messageKey = "eggChain";
+      else if (discoveredMoves % 12 === 0) messageKey = "eggStreak";
+      else if (!state.themeUnlocked && !state.campaignUnlocked) messageKey = "";
+      render();
     },
     leaveVictory() {
       if (!config.enabled || !config.campaignEnding || !state.endingPending) return;

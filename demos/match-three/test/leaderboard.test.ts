@@ -2,7 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { Database } from "bun:sqlite";
 import { createHash, generateKeyPairSync, sign } from "node:crypto";
 import { createLeaderboardServer } from "../server/app.ts";
-import { replayRun } from "../src/ranked.ts";
+import { replayRun, RULES_VERSION } from "../src/ranked.ts";
 import type { Action, RankedRun } from "../src/ranked.ts";
 import { activateSpecial, areAdjacent, findMatchGroups, findMatches, move, specialTargets, createBoard, hasMoves } from "../src/engine.ts";
 import { mkdtempSync, rmSync } from "node:fs";
@@ -208,6 +208,12 @@ describe("deterministic ranked replay", () => {
     expect(resumed.game).toEqual(game);
     expect(replayRun(run, actions).game).toEqual(game);
     expect(() => replayRun({ ...run, rules: "different" }, actions)).toThrow();
+    h.db.close();
+  });
+  test("ranked replay accepts at most two mallet actions", async () => {
+    const h = harness();
+    const run = { id: "test", seed: 123, level: 1, completed: 0, expires: Date.now() + 60_000, rules: RULES_VERSION };
+    expect(() => replayRun(run, [[-1, 0], [-1, 1], [-1, 2]])).toThrow("INVALID_ACTIONS");
     h.db.close();
   });
 });
